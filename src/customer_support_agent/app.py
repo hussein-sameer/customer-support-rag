@@ -36,7 +36,7 @@ embedding_function = GoogleGenerativeAIEmbeddings(api_key=gapi, model='gemini-em
 vectorstore = Chroma.from_documents(
     chunk,
     embedding=embedding_function,
-    persist_directory=os.getcwd()
+    persist_directory = os.path.join(os.getcwd(), "data")
 )
 
 # Configure the vector store as a retriever
