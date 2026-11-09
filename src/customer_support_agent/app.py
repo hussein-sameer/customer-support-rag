@@ -18,15 +18,17 @@ loader = PyPDFLoader("data/NovaCore_FAQ_Knowledge_Base.pdf")
 docs = loader.load()
 
 # Chuncking the document in preparation for embedding
-chunk_size = 24
-chunk_overlap = 10
+chunk_size = 500
+chunk_overlap = 250
 splitter = RecursiveCharacterTextSplitter(
     separators=["\n", " ", ""],
     chunk_size=chunk_size,
     chunk_overlap=chunk_overlap)
 
 chunk = splitter.split_documents(documents = docs)
+#print(len(chunk))
 
 # Initializing the embedding model
 embedding_function = GoogleGenerativeAIEmbeddings(api_key=gapi, model='gemini-embedding-2')
-print(embedding_function.embed_query("Hello world"))
+# IMPORTANT: Using free tier grants only 100RPM, GoogleGenerativeAIEmbeddings send each chunck in a seprate request,
+# so the chuncking was changed to get less than 50 chunks to allow us for 2 queries per minute for testing.
