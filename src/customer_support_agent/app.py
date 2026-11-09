@@ -67,3 +67,7 @@ prompt_template = ChatPromptTemplate.from_messages([("human", message)])
 rag_chain = ({"context": retriever, "question": RunnablePassthrough()}
             | prompt_template
             | llm)
+
+# Invoke the chain
+response = rag_chain.invoke("whats the warranty for my personnal data protection?")
+print(response.content[0]["text"])
