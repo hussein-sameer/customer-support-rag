@@ -1,4 +1,4 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
@@ -27,4 +27,6 @@ splitter = RecursiveCharacterTextSplitter(
 
 chunk = splitter.split_documents(documents = docs)
 
-print(chunk)
+# Initializing the embedding model
+embedding_function = GoogleGenerativeAIEmbeddings(api_key=gapi, model='gemini-embedding-2')
+print(embedding_function.embed_query("Hello world"))
