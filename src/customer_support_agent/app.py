@@ -2,6 +2,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
+from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 import os
 
@@ -45,10 +46,19 @@ retriever = vectorstore.as_retriever(
     search_kwargs={"k": 3}
 )
 
-query = "How do you ensure my data privacy?"
-results = retriever.invoke(query)
-print(f"Total documents retrieved (k): {len(results)}\n")
-for i, doc in enumerate(results, 1):
-    print(f"--- Document {i} ---")
-    print(f"Content: {doc.page_content}")
-    print(f"Metadata: {doc.metadata}\n")
+# Create the message template for the llm
+message = """
+Answer the following question using the context provided:
+
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:
+"""
+
+# Create a chat prompt template from the message string
+prompt_template = ChatPromptTemplate.from_messages([("human", message)])
+print(prompt_template)
