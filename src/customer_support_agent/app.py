@@ -1,8 +1,9 @@
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_chroma import Chroma
+from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_chroma import Chroma
 from dotenv import load_dotenv
 import os
 
@@ -61,4 +62,8 @@ Answer:
 
 # Create a chat prompt template from the message string
 prompt_template = ChatPromptTemplate.from_messages([("human", message)])
-print(prompt_template)
+
+# Create a chain to link retriever, prompt_template, and llm using langchain LCEL
+rag_chain = ({"context": retriever, "question": RunnablePassthrough()}
+            | prompt_template
+            | llm)
