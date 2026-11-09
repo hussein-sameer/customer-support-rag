@@ -2,3 +2,4 @@ langchain
 langchain_google_genai
 langchain_community
 pypdf
+langchain_text_splitters
