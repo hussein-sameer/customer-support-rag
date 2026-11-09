@@ -1,6 +1,7 @@
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_chroma import Chroma
 from dotenv import load_dotenv
 import os
 
@@ -32,3 +33,22 @@ chunk = splitter.split_documents(documents = docs)
 embedding_function = GoogleGenerativeAIEmbeddings(api_key=gapi, model='gemini-embedding-2')
 # IMPORTANT: Using free tier grants only 100RPM, GoogleGenerativeAIEmbeddings send each chunck in a seprate request,
 # so the chuncking was changed to get less than 50 chunks to allow us for 2 queries per minute for testing.
+vectorstore = Chroma.from_documents(
+    chunk,
+    embedding=embedding_function,
+    persist_directory=os.getcwd()
+)
+
+# Configure the vector store as a retriever
+retriever = vectorstore.as_retriever(
+    search_type="similarity",
+    search_kwargs={"k": 3}
+)
+
+query = "How do you ensure my data privacy?"
+results = retriever.invoke(query)
+print(f"Total documents retrieved (k): {len(results)}\n")
+for i, doc in enumerate(results, 1):
+    print(f"--- Document {i} ---")
+    print(f"Content: {doc.page_content}")
+    print(f"Metadata: {doc.metadata}\n")
