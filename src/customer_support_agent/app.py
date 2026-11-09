@@ -12,9 +12,12 @@ gapi = os.getenv("GOOGLE_API_KEY")
 llm = ChatGoogleGenerativeAI(
     model="gemini-3.5-flash-lite",
     )
+
+# Loading the support FAQ pdf
 loader = PyPDFLoader("data/NovaCore_FAQ_Knowledge_Base.pdf")
 docs = loader.load()
 
+# Chuncking the document in preparation for embedding
 chunk_size = 24
 chunk_overlap = 10
 splitter = RecursiveCharacterTextSplitter(
@@ -23,4 +26,5 @@ splitter = RecursiveCharacterTextSplitter(
     chunk_overlap=chunk_overlap)
 
 chunk = splitter.split_documents(documents = docs)
+
 print(chunk)
